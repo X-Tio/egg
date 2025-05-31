@@ -1,23 +1,27 @@
-const { exec } = require('child_process');
-const { cwd, env, argv, stdout, stderr, exit } = require('process');
+const { spawn } = require('child_process');
+const { argv, env, cwd, exit } = require('process');
 
-// Gabungkan argumen menjadi satu perintah
-const command = argv.slice(2).join(' ');
+// Ambil perintah dari argumen
+const command = argv.slice(2);
 
-if (!command) {
-  console.log('ℹ️ Tidak ada perintah diberikan. Menunggu hingga container dihentikan...');
-  // Dummy loop agar tetap hidup
-  setInterval(() => {}, 1000);
-} else {
-  console.log(`▶️ Menjalankan perintah: ${command}`);
-
-  const child = exec(command, { cwd: cwd(), env });
-
-  child.stdout.on('data', data => stdout.write(data));
-  child.stderr.on('data', data => stderr.write(data));
+// Fungsi untuk jalankan perintah
+function runCommand(cmd, args) {
+  const child = spawn(cmd, args, {
+    stdio: 'inherit',
+    cwd: cwd(),
+    env: env,
+  });
 
   child.on('exit', code => {
-    console.log(`⚙️ Proses selesai dengan kode: ${code}`);
+    console.log(`🔚 Proses keluar dengan kode: ${code}`);
     exit(code);
   });
+}
+
+if (command.length === 0) {
+  console.log('ℹ️ masukan cmd..');
+  runCommand('/bin/sh', []);
+} else {
+  console.log(`▶️ Menjalankan perintah: ${command.join(' ')}`);
+  runCommand(command[0], command.slice(1));
 }
