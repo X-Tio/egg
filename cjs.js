@@ -5,7 +5,7 @@ const command = process.argv.slice(2).join(' ');
 
 if (!command) {
   console.error('❌ Tidak ada perintah yang diberikan. Gunakan: node /run.cjs <perintah>');
-  process.exit(1);
+//  process.exit(1);
 }
 
 console.log(`▶️ Menjalankan perintah: ${command}`);
