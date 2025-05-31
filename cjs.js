@@ -1,25 +1,23 @@
 const { exec } = require('child_process');
+const { cwd, env, argv, stdout, stderr, exit } = require('process');
 
-// Gabungkan semua argumen setelah "node /run.cjs"
-const command = process.argv.slice(2).join(' ');
+// Gabungkan argumen menjadi satu perintah
+const command = argv.slice(2).join(' ');
 
 if (!command) {
-  console.error('❌ Tidak ada perintah yang diberikan. Gunakan: node /run.cjs <perintah>');
-//  process.exit(1);
+  console.log('ℹ️ Tidak ada perintah diberikan. Menunggu hingga container dihentikan...');
+  // Dummy loop agar tetap hidup
+  setInterval(() => {}, 1000);
+} else {
+  console.log(`▶️ Menjalankan perintah: ${command}`);
+
+  const child = exec(command, { cwd: cwd(), env });
+
+  child.stdout.on('data', data => stdout.write(data));
+  child.stderr.on('data', data => stderr.write(data));
+
+  child.on('exit', code => {
+    console.log(`⚙️ Proses selesai dengan kode: ${code}`);
+    exit(code);
+  });
 }
-
-console.log(`▶️ Menjalankan perintah: ${command}`);
-
-const child = exec(command, { cwd: process.cwd(), env: process.env });
-
-// Tampilkan output stdout
-child.stdout.on('data', data => process.stdout.write(data));
-
-// Tampilkan output stderr
-child.stderr.on('data', data => process.stderr.write(data));
-
-// Handle saat proses selesai
-child.on('exit', code => {
-  console.log(`⚙️ Proses selesai dengan kode: ${code}`);
-  process.exit(code);
-});
