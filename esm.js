@@ -5,7 +5,7 @@ import { cwd, env, exit, argv, stdout, stderr } from 'node:process';
 const command = argv.slice(2).join(' ');
 
 if (!command) {
-  console.error('❌ Tidak ada perintah yang diberikan. Gunakan: node run.mjs <perintah>');
+  //console.error('❌ Tidak ada perintah yang diberikan. Gunakan: node run.mjs <perintah>');
   exit(1);
 }
 
